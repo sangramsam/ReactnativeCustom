@@ -1,0 +1,706 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1561\cocoasubrtf200
+{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;\red234\green255\blue255;\red25\green25\blue25;\red185\green122\blue229;
+\red121\green213\blue255;\red184\green230\blue123;\red242\green119\blue89;\red233\green89\blue101;\red254\green193\blue89;
+}
+{\*\expandedcolortbl;;\csgenericrgb\c91765\c100000\c100000;\csgenericrgb\c9804\c9804\c9804;\csgenericrgb\c72549\c47843\c89804;
+\csgenericrgb\c47451\c83529\c100000;\csgenericrgb\c72157\c90196\c48235;\csgenericrgb\c94902\c46667\c34902;\csgenericrgb\c91373\c34902\c39608;\csgenericrgb\c99608\c75686\c34902;
+}
+\paperw11900\paperh16840\margl1440\margr1440\vieww10800\viewh8400\viewkind0
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural\partightenfactor0
+
+\f0\fs24 \cf2 \cb3 \
+
+\i \cf4 import 
+\i0 \cf2 React\cf5 , \{ \cf2 PureComponent \cf5 \} 
+\i \cf4 from 
+\i0 \cf6 'react'\cf5 ;\
+
+\i \cf4 import 
+\i0 \cf2 PropTypes 
+\i \cf4 from 
+\i0 \cf6 'prop-types'\cf5 ;\
+
+\i \cf4 import 
+\i0 \cf5 \{ \cf2 View\cf5 ,\cf2 Text\cf5 ,\cf2 StyleSheet\cf5 , \cf2 Animated\cf5 , \cf2 TouchableWithoutFeedback \cf5 \} 
+\i \cf4 from 
+\i0 \cf6 'react-native'\cf5 ;\
+\
+
+\i \cf4 const 
+\i0 \cf2 STEP_STATUS \cf5 = \{\
+  \cf2 CURRENT\cf5 :\cf6 'current'\cf5 ,\
+  \cf2 FINISHED\cf5 :\cf6 'finished'\cf5 ,\
+  \cf2 UNFINISHED\cf5 :\cf6 'unfinished'\
+\cf5 \}\
+\
+
+\i \cf4 export default class 
+\i0 \cf2 StepIndicator 
+\i \cf4 extends 
+\i0 \cf2 PureComponent \cf5 \{\
+\
+  \cf2 constructor\cf5 (\cf2 props\cf5 ) \{\
+    
+\i \cf4 super
+\i0 \cf5 (\cf2 props\cf5 );\
+\
+    
+\i \cf4 this
+\i0 \cf5 .\cf2 state \cf5 = \{\
+      \cf2 width\cf5 :\cf7 0\cf5 ,\
+      \cf2 height\cf5 :\cf7 0\cf5 ,\
+      \cf2 progressBarSize\cf5 :\cf7 0\
+    \cf5 \}\
+\
+    
+\i \cf4 const 
+\i0 \cf2 defaultStyles \cf5 = \{\
+      \cf2 stepIndicatorSize\cf5 : \cf7 30\cf5 ,\
+      \cf2 currentStepIndicatorSize\cf5 :\cf7 40\cf5 ,\
+      \cf2 separatorStrokeWidth\cf5 : \cf7 3\cf5 ,\
+      \cf2 currentStepStrokeWidth\cf5 : \cf7 5\cf5 ,\
+      \cf2 stepStrokeWidth\cf5 : \cf7 0\cf5 ,\
+      \cf2 stepStrokeCurrentColor\cf5 : \cf6 '#4aae4f'\cf5 ,\
+      \cf2 stepStrokeFinishedColor\cf5 : \cf6 '#4aae4f'\cf5 ,\
+      \cf2 stepStrokeUnFinishedColor\cf5 : \cf6 '#4aae4f'\cf5 ,\
+      \cf2 separatorFinishedColor\cf5 : \cf6 '#4aae4f'\cf5 ,\
+      \cf2 separatorUnFinishedColor\cf5 : \cf6 '#a4d4a5'\cf5 ,\
+      \cf2 stepIndicatorFinishedColor\cf5 : \cf6 '#4aae4f'\cf5 ,\
+      \cf2 stepIndicatorUnFinishedColor\cf5 : \cf6 '#a4d4a5'\cf5 ,\
+      \cf2 stepIndicatorCurrentColor\cf5 : \cf6 '#ffffff'\cf5 ,\
+      \cf2 stepIndicatorLabelFontSize\cf5 : \cf7 15\cf5 ,\
+      \cf2 currentStepIndicatorLabelFontSize\cf5 : \cf7 15\cf5 ,\
+      \cf2 stepIndicatorLabelCurrentColor\cf5 : \cf6 '#000000'\cf5 ,\
+      \cf2 stepIndicatorLabelFinishedColor\cf5 : \cf6 '#ffffff'\cf5 ,\
+      \cf2 stepIndicatorLabelUnFinishedColor\cf5 : \cf6 'rgba(255,255,255,0.5)'\cf5 ,\
+      \cf2 labelColor\cf5 : \cf6 '#000000'\cf5 ,\
+      \cf2 labelSize\cf5 : \cf7 13\cf5 ,\
+      \cf2 currentStepLabelColor\cf5 : \cf6 '#4aae4f'\
+    \cf5 \};\
+\
+    
+\i \cf4 this
+\i0 \cf5 .\cf2 customStyles \cf5 = \cf2 Object\cf5 .\cf2 assign\cf5 (\cf2 defaultStyles\cf5 , \cf2 props\cf5 .\cf2 customStyles\cf5 );\
+    
+\i \cf4 this
+\i0 \cf5 .\cf2 progressAnim \cf5 = 
+\i \cf4 new 
+\i0 \cf2 Animated\cf5 .\cf2 Value\cf5 (\cf7 0\cf5 )\
+    
+\i \cf4 this
+\i0 \cf5 .\cf2 sizeAnim \cf5 = 
+\i \cf4 new 
+\i0 \cf2 Animated\cf5 .\cf2 Value\cf5 (
+\i \cf4 this
+\i0 \cf5 .\cf2 customStyles\cf5 .\cf2 stepIndicatorSize\cf5 );\
+    
+\i \cf4 this
+\i0 \cf5 .\cf2 borderRadiusAnim \cf5 = 
+\i \cf4 new 
+\i0 \cf2 Animated\cf5 .\cf2 Value\cf5 (
+\i \cf4 this
+\i0 \cf5 .\cf2 customStyles\cf5 .\cf2 stepIndicatorSize\cf5 /\cf7 2\cf5 );\
+  \}\
+\
+  \cf2 stepPressed\cf5 (\cf2 position\cf5 ) \{\
+    
+\i \cf4 if
+\i0 \cf5 (
+\i \cf4 this
+\i0 \cf5 .\cf2 props\cf5 .\cf2 onPress\cf5 ) \{\
+      
+\i \cf4 this
+\i0 \cf5 .\cf2 props\cf5 .\cf2 onPress\cf5 (\cf2 position\cf5 )\
+    \}\
+  \}\
+\
+  \cf2 render\cf5 () \{\
+    
+\i \cf4 const 
+\i0 \cf5 \{ \cf2 labels\cf5 , \cf2 direction \cf5 \} = 
+\i \cf4 this
+\i0 \cf5 .\cf2 props\cf5 ;\
+    
+\i \cf4 return 
+\i0 \cf5 (\
+      <\cf8 View 
+\i \cf9 style
+\i0 \cf6 =\cf5 \{[\cf2 styles\cf5 .\cf2 container\cf5 , \cf2 direction \cf5 === \cf6 'vertical' \cf5 ? \{\cf2 flexDirection\cf5 : \cf6 'row'\cf5 , \cf2 flex\cf5 :\cf7 1\cf5 \} : \{\cf2 flexDirection\cf5 : \cf6 'column'\cf5 \}]\}>\
+        \{
+\i \cf4 this
+\i0 \cf5 .\cf2 state\cf5 .\cf2 width \cf5 !== \cf7 0 \cf5 && 
+\i \cf4 this
+\i0 \cf5 .\cf2 renderProgressBarBackground\cf5 ()\}\
+        \{
+\i \cf4 this
+\i0 \cf5 .\cf2 state\cf5 .\cf2 width \cf5 !== \cf7 0 \cf5 && 
+\i \cf4 this
+\i0 \cf5 .\cf2 renderProgressBar\cf5 ()\}\
+        \{
+\i \cf4 this
+\i0 \cf5 .\cf2 renderStepIndicator\cf5 ()\}\
+        \{\cf2 labels \cf5 && 
+\i \cf4 this
+\i0 \cf5 .\cf2 renderStepLabels\cf5 ()\}\
+      </\cf8 View\cf5 >\
+    );\
+  \}\
+\
+  \cf2 componentWillReceiveProps\cf5 (\cf2 nextProps\cf5 ) \{\
+    
+\i \cf4 if
+\i0 \cf5 (\cf2 nextProps\cf5 .\cf2 currentPosition \cf5 !== 
+\i \cf4 this
+\i0 \cf5 .\cf2 props\cf5 .\cf2 currentPosition\cf5 ) \{\
+      
+\i \cf4 this
+\i0 \cf5 .\cf2 onCurrentPositionChanged\cf5 (\cf2 nextProps\cf5 .\cf2 currentPosition\cf5 );\
+    \}\
+  \}\
+\
+  \cf2 renderProgressBarBackground \cf5 = () => \{\
+    
+\i \cf4 const 
+\i0 \cf5 \{ \cf2 stepCount\cf5 , \cf2 direction \cf5 \} = 
+\i \cf4 this
+\i0 \cf5 .\cf2 props\cf5 ;\
+    
+\i \cf4 let 
+\i0 \cf2 progressBarBackgroundStyle\cf5 ;\
+    
+\i \cf4 if
+\i0 \cf5 (\cf2 direction \cf5 === \cf6 'vertical'\cf5 ) \{\
+      \cf2 progressBarBackgroundStyle \cf5 = \{\
+        \cf2 backgroundColor\cf5 :
+\i \cf4 this
+\i0 \cf5 .\cf2 customStyles\cf5 .\cf2 separatorUnFinishedColor\cf5 ,\
+        \cf2 position\cf5 :\cf6 'absolute'\cf5 ,\
+        \cf2 left\cf5 :(
+\i \cf4 this
+\i0 \cf5 .\cf2 state\cf5 .\cf2 width \cf5 - 
+\i \cf4 this
+\i0 \cf5 .\cf2 customStyles\cf5 .\cf2 separatorStrokeWidth\cf5 )/\cf7 2\cf5 ,\
+        \cf2 top\cf5 :
+\i \cf4 this
+\i0 \cf5 .\cf2 state\cf5 .\cf2 height\cf5 /(\cf7 2\cf5 *\cf2 stepCount\cf5 ),\
+        \cf2 bottom\cf5 :
+\i \cf4 this
+\i0 \cf5 .\cf2 state\cf5 .\cf2 height\cf5 /(\cf7 2\cf5 *\cf2 stepCount\cf5 ),\
+        \cf2 width\cf5 :
+\i \cf4 this
+\i0 \cf5 .\cf2 customStyles\cf5 .\cf2 separatorStrokeWidth\
+      \cf5 \}\
+    \}\
+    
+\i \cf4 else 
+\i0 \cf5 \{\
+      \cf2 progressBarBackgroundStyle \cf5 = \{\
+        \cf2 backgroundColor\cf5 :
+\i \cf4 this
+\i0 \cf5 .\cf2 customStyles\cf5 .\cf2 separatorUnFinishedColor\cf5 ,\
+        \cf2 position\cf5 :\cf6 'absolute'\cf5 ,\
+        \cf2 top\cf5 :(
+\i \cf4 this
+\i0 \cf5 .\cf2 state\cf5 .\cf2 height \cf5 - 
+\i \cf4 this
+\i0 \cf5 .\cf2 customStyles\cf5 .\cf2 separatorStrokeWidth\cf5 )/\cf7 2\cf5 ,\
+        \cf2 left\cf5 :
+\i \cf4 this
+\i0 \cf5 .\cf2 state\cf5 .\cf2 width\cf5 /(\cf7 2\cf5 *\cf2 stepCount\cf5 ),\
+        \cf2 right\cf5 :
+\i \cf4 this
+\i0 \cf5 .\cf2 state\cf5 .\cf2 width\cf5 /(\cf7 2\cf5 *\cf2 stepCount\cf5 ),\
+        \cf2 height\cf5 :
+\i \cf4 this
+\i0 \cf5 .\cf2 customStyles\cf5 .\cf2 separatorStrokeWidth\
+      \cf5 \}\
+    \}\
+    
+\i \cf4 return
+\i0 \cf5 (\
+      <\cf8 View\
+        
+\i \cf9 onLayout
+\i0 \cf6 =\cf5 \{(\cf2 event\cf5 ) => \{\
+          
+\i \cf4 if
+\i0 \cf5 (\cf2 direction \cf5 === \cf6 'vertical'\cf5 ) \{\
+            
+\i \cf4 this
+\i0 \cf5 .\cf2 setState\cf5 (\{\cf2 progressBarSize\cf5 : \cf2 event\cf5 .\cf2 nativeEvent\cf5 .\cf2 layout\cf5 .\cf2 height\cf5 \} , () => \{
+\i \cf4 this
+\i0 \cf5 .\cf2 onCurrentPositionChanged\cf5 (
+\i \cf4 this
+\i0 \cf5 .\cf2 props\cf5 .\cf2 currentPosition\cf5 )\})\
+          \}\
+          
+\i \cf4 else 
+\i0 \cf5 \{\
+            
+\i \cf4 this
+\i0 \cf5 .\cf2 setState\cf5 (\{\cf2 progressBarSize\cf5 : \cf2 event\cf5 .\cf2 nativeEvent\cf5 .\cf2 layout\cf5 .\cf2 width\cf5 \} , () => \{
+\i \cf4 this
+\i0 \cf5 .\cf2 onCurrentPositionChanged\cf5 (
+\i \cf4 this
+\i0 \cf5 .\cf2 props\cf5 .\cf2 currentPosition\cf5 )\})\
+          \}\
+        \}\}\
+        
+\i \cf9 style
+\i0 \cf6 =\cf5 \{\cf2 progressBarBackgroundStyle\cf5 \}/>\
+    )\
+  \}\
+\
+  \cf2 renderProgressBar \cf5 = () => \{\
+    
+\i \cf4 const 
+\i0 \cf5 \{ \cf2 stepCount\cf5 , \cf2 direction \cf5 \} = 
+\i \cf4 this
+\i0 \cf5 .\cf2 props\cf5 ;\
+    
+\i \cf4 let 
+\i0 \cf2 progressBarStyle\cf5 ;\
+    
+\i \cf4 if
+\i0 \cf5 (\cf2 direction \cf5 === \cf6 'vertical'\cf5 ) \{\
+      \cf2 progressBarStyle \cf5 = \{\
+        \cf2 backgroundColor\cf5 :
+\i \cf4 this
+\i0 \cf5 .\cf2 customStyles\cf5 .\cf2 separatorFinishedColor\cf5 ,\
+        \cf2 position\cf5 :\cf6 'absolute'\cf5 ,\
+        \cf2 left\cf5 :(
+\i \cf4 this
+\i0 \cf5 .\cf2 state\cf5 .\cf2 width \cf5 - 
+\i \cf4 this
+\i0 \cf5 .\cf2 customStyles\cf5 .\cf2 separatorStrokeWidth\cf5 )/\cf7 2\cf5 ,\
+        \cf2 top\cf5 :
+\i \cf4 this
+\i0 \cf5 .\cf2 state\cf5 .\cf2 height\cf5 /(\cf7 2\cf5 *\cf2 stepCount\cf5 ),\
+        \cf2 bottom\cf5 :
+\i \cf4 this
+\i0 \cf5 .\cf2 state\cf5 .\cf2 height\cf5 /(\cf7 2\cf5 *\cf2 stepCount\cf5 ),\
+        \cf2 width\cf5 :
+\i \cf4 this
+\i0 \cf5 .\cf2 customStyles\cf5 .\cf2 separatorStrokeWidth\cf5 ,\
+        \cf2 height\cf5 :
+\i \cf4 this
+\i0 \cf5 .\cf2 progressAnim\
+      \cf5 \}\
+    \}\
+    
+\i \cf4 else 
+\i0 \cf5 \{\
+      \cf2 progressBarStyle \cf5 = \{\
+        \cf2 backgroundColor\cf5 :
+\i \cf4 this
+\i0 \cf5 .\cf2 customStyles\cf5 .\cf2 separatorFinishedColor\cf5 ,\
+        \cf2 position\cf5 :\cf6 'absolute'\cf5 ,\
+        \cf2 top\cf5 :(
+\i \cf4 this
+\i0 \cf5 .\cf2 state\cf5 .\cf2 height \cf5 - 
+\i \cf4 this
+\i0 \cf5 .\cf2 customStyles\cf5 .\cf2 separatorStrokeWidth\cf5 )/\cf7 2\cf5 ,\
+        \cf2 left\cf5 :
+\i \cf4 this
+\i0 \cf5 .\cf2 state\cf5 .\cf2 width\cf5 /(\cf7 2\cf5 *\cf2 stepCount\cf5 ),\
+        \cf2 right\cf5 :
+\i \cf4 this
+\i0 \cf5 .\cf2 state\cf5 .\cf2 width\cf5 /(\cf7 2\cf5 *\cf2 stepCount\cf5 ),\
+        \cf2 height\cf5 :
+\i \cf4 this
+\i0 \cf5 .\cf2 customStyles\cf5 .\cf2 separatorStrokeWidth\cf5 ,\
+        \cf2 width\cf5 :
+\i \cf4 this
+\i0 \cf5 .\cf2 progressAnim\
+      \cf5 \}\
+    \}\
+    
+\i \cf4 return
+\i0 \cf5 (\
+      <\cf8 Animated.View\
+        
+\i \cf9 style
+\i0 \cf6 =\cf5 \{\cf2 progressBarStyle\cf5 \}/>\
+    )\
+  \}\
+\
+  \cf2 renderStepIndicator \cf5 = () => \{\
+    
+\i \cf4 let 
+\i0 \cf2 steps \cf5 = [];\
+    
+\i \cf4 const 
+\i0 \cf5 \{ \cf2 labels\cf5 , \cf2 stepCount\cf5 , \cf2 direction \cf5 \} = 
+\i \cf4 this
+\i0 \cf5 .\cf2 props\cf5 ;\
+    
+\i \cf4 for
+\i0 \cf5 (
+\i \cf4 let 
+\i0 \cf2 position \cf5 = \cf7 0 \cf5 ; \cf2 position \cf5 < \cf2 stepCount \cf5 ; \cf2 position\cf5 ++) \{\
+      \cf2 steps\cf5 .\cf2 push\cf5 (\
+        <\cf8 TouchableWithoutFeedback 
+\i \cf9 key
+\i0 \cf6 =\cf5 \{\cf2 position\cf5 \} 
+\i \cf9 onPress
+\i0 \cf6 =\cf5 \{() => 
+\i \cf4 this
+\i0 \cf5 .\cf2 stepPressed\cf5 (\cf2 position\cf5 )\}>\
+          <\cf8 View 
+\i \cf9 style
+\i0 \cf6 =\cf5 \{[\cf2 styles\cf5 .\cf2 stepContainer\cf5 , \cf2 direction \cf5 === \cf6 'vertical' \cf5 ? \{\cf2 flexDirection\cf5 : \cf6 'column'\cf5 \} : \{\cf2 flexDirection\cf5 : \cf6 'row'\cf5 \}]\}>\
+            \{
+\i \cf4 this
+\i0 \cf5 .\cf2 renderStep\cf5 (\cf2 position\cf5 )\}\
+          </\cf8 View\cf5 >\
+        </\cf8 TouchableWithoutFeedback\cf5 >\
+        )\
+      \}\
+      
+\i \cf4 return
+\i0 \cf5 (\
+        <\cf8 View 
+\i \cf9 onLayout
+\i0 \cf6 =\cf5 \{(\cf2 event\cf5 ) => 
+\i \cf4 this
+\i0 \cf5 .\cf2 setState\cf5 (\{\cf2 width\cf5 : \cf2 event\cf5 .\cf2 nativeEvent\cf5 .\cf2 layout\cf5 .\cf2 width\cf5 , \cf2 height\cf5 : \cf2 event\cf5 .\cf2 nativeEvent\cf5 .\cf2 layout\cf5 .\cf2 height\cf5 \})\} 
+\i \cf9 style
+\i0 \cf6 =\cf5 \{[\cf2 styles\cf5 .\cf2 stepIndicatorContainer\cf5 , \cf2 direction \cf5 === \cf6 'vertical' \cf5 ? \{\cf2 flexDirection\cf5 : \cf6 'column'\cf5 , \cf2 width\cf5 :
+\i \cf4 this
+\i0 \cf5 .\cf2 customStyles\cf5 .\cf2 currentStepIndicatorSize\cf5 \} : \{\cf2 flexDirection\cf5 : \cf6 'row'\cf5 , \cf2 height\cf5 :
+\i \cf4 this
+\i0 \cf5 .\cf2 customStyles\cf5 .\cf2 currentStepIndicatorSize\cf5 \}]\}>\
+          \{\cf2 steps\cf5 \}\
+        </\cf8 View\cf5 >\
+      )\
+    \}\
+\
+    \cf2 renderStepLabels \cf5 = () => \{\
+      
+\i \cf4 const 
+\i0 \cf5 \{ \cf2 labels\cf5 , \cf2 direction\cf5 , \cf2 currentPosition \cf5 \} = 
+\i \cf4 this
+\i0 \cf5 .\cf2 props\cf5 ;\
+      
+\i \cf4 var 
+\i0 \cf2 labelViews \cf5 = \cf2 labels\cf5 .\cf2 map\cf5 ((\cf2 label\cf5 ,\cf2 index\cf5 ) => \{\
+        
+\i \cf4 const 
+\i0 \cf2 selectedStepLabelStyle \cf5 = \cf2 index \cf5 === \cf2 currentPosition \cf5 ? \{ \cf2 color\cf5 : 
+\i \cf4 this
+\i0 \cf5 .\cf2 customStyles\cf5 .\cf2 currentStepLabelColor \cf5 \} : \{ \cf2 color\cf5 : 
+\i \cf4 this
+\i0 \cf5 .\cf2 customStyles\cf5 .\cf2 labelColor \cf5 \}\
+        
+\i \cf4 return 
+\i0 \cf5 (\
+          <\cf8 TouchableWithoutFeedback 
+\i \cf9 style
+\i0 \cf6 =\cf5 \{\cf2 styles\cf5 .\cf2 stepLabelItem\cf5 \} 
+\i \cf9 key
+\i0 \cf6 =\cf5 \{\cf2 index\cf5 \} 
+\i \cf9 onPress
+\i0 \cf6 =\cf5 \{() => 
+\i \cf4 this
+\i0 \cf5 .\cf2 stepPressed\cf5 (\cf2 index\cf5 )\}>\
+            <\cf8 View 
+\i \cf9 style
+\i0 \cf6 =\cf5 \{\cf2 styles\cf5 .\cf2 stepLabelItem\cf5 \}>\
+              <\cf8 Text 
+\i \cf9 style
+\i0 \cf6 =\cf5 \{[\cf2 styles\cf5 .\cf2 stepLabel\cf5 ,\cf2 selectedStepLabelStyle \cf5 , \{ \cf2 fontSize\cf5 : 
+\i \cf4 this
+\i0 \cf5 .\cf2 customStyles\cf5 .\cf2 labelSize \cf5 \}]\}>\
+                \{\cf2 label\cf5 \}\
+              </\cf8 Text\cf5 >\
+            </\cf8 View\cf5 >\
+          </\cf8 TouchableWithoutFeedback\cf5 >\
+        )\
+      \});\
+\
+      
+\i \cf4 return
+\i0 \cf5 (\
+        <\cf8 View 
+\i \cf9 style
+\i0 \cf6 =\cf5 \{[\cf2 styles\cf5 .\cf2 stepLabelsContainer\cf5 , \cf2 direction \cf5 === \cf6 'vertical' \cf5 ? \{\cf2 flexDirection\cf5 : \cf6 'column'\cf5 , \cf2 paddingHorizontal\cf5 :\cf7 4\cf5 \} : \{\cf2 flexDirection\cf5 : \cf6 'row'\cf5 , \cf2 paddingVertical\cf5 :\cf7 4\cf5 \}]\}>\
+          \{\cf2 labelViews\cf5 \}\
+        </\cf8 View\cf5 >\
+      )\
+    \}\
+\
+    \cf2 renderStep \cf5 = (\cf2 position\cf5 ) => \{\
+      
+\i \cf4 const 
+\i0 \cf5 \{ \cf2 currentPosition\cf5 , \cf2 stepCount\cf5 , \cf2 direction \cf5 \} = 
+\i \cf4 this
+\i0 \cf5 .\cf2 props\cf5 ;\
+      
+\i \cf4 let 
+\i0 \cf2 stepStyle\cf5 ;\
+      
+\i \cf4 let 
+\i0 \cf2 indicatorLabelStyle\cf5 ;\
+      
+\i \cf4 const 
+\i0 \cf2 separatorStyle \cf5 = (\cf2 direction \cf5 === \cf6 'vertical'\cf5 ) ? \{ \cf2 width\cf5 : 
+\i \cf4 this
+\i0 \cf5 .\cf2 customStyles\cf5 .\cf2 separatorStrokeWidth\cf5 , \cf2 zIndex\cf5 :\cf7 10 \cf5 \} : \{ \cf2 height\cf5 : 
+\i \cf4 this
+\i0 \cf5 .\cf2 customStyles\cf5 .\cf2 separatorStrokeWidth \cf5 \}\
+      
+\i \cf4 switch 
+\i0 \cf5 (
+\i \cf4 this
+\i0 \cf5 .\cf2 getStepStatus\cf5 (\cf2 position\cf5 )) \{\
+        
+\i \cf4 case 
+\i0 \cf2 STEP_STATUS\cf5 .\cf2 CURRENT\cf5 : \{\
+          \cf2 stepStyle \cf5 = \{\
+            \cf2 backgroundColor\cf5 :
+\i \cf4 this
+\i0 \cf5 .\cf2 customStyles\cf5 .\cf2 stepIndicatorCurrentColor\cf5 ,\
+            \cf2 borderWidth\cf5 :
+\i \cf4 this
+\i0 \cf5 .\cf2 customStyles\cf5 .\cf2 currentStepStrokeWidth\cf5 ,\
+            \cf2 borderColor\cf5 :
+\i \cf4 this
+\i0 \cf5 .\cf2 customStyles\cf5 .\cf2 stepStrokeCurrentColor\cf5 ,\
+            \cf2 height\cf5 :
+\i \cf4 this
+\i0 \cf5 .\cf2 sizeAnim\cf5 ,\
+            \cf2 width\cf5 :
+\i \cf4 this
+\i0 \cf5 .\cf2 sizeAnim\cf5 ,\
+          \};\
+          \cf2 indicatorLabelStyle \cf5 = \{ \cf2 fontSize\cf5 : 
+\i \cf4 this
+\i0 \cf5 .\cf2 customStyles\cf5 .\cf2 currentStepIndicatorLabelFontSize\cf5 , \cf2 color\cf5 : 
+\i \cf4 this
+\i0 \cf5 .\cf2 customStyles\cf5 .\cf2 stepIndicatorLabelCurrentColor \cf5 \};\
+\
+          
+\i \cf4 break
+\i0 \cf5 ;\
+        \}\
+        
+\i \cf4 case 
+\i0 \cf2 STEP_STATUS\cf5 .\cf2 FINISHED\cf5 :\{\
+          \cf2 stepStyle \cf5 = \{\
+            \cf2 backgroundColor\cf5 : 
+\i \cf4 this
+\i0 \cf5 .\cf2 customStyles\cf5 .\cf2 stepIndicatorFinishedColor\cf5 ,\
+            \cf2 borderWidth\cf5 :
+\i \cf4 this
+\i0 \cf5 .\cf2 customStyles\cf5 .\cf2 stepStrokeWidth\cf5 ,\
+            \cf2 borderColor\cf5 :
+\i \cf4 this
+\i0 \cf5 .\cf2 customStyles\cf5 .\cf2 stepStrokeFinishedColor\cf5 ,\
+            \cf2 height\cf5 :
+\i \cf4 this
+\i0 \cf5 .\cf2 customStyles\cf5 .\cf2 stepIndicatorSize\cf5 ,\
+            \cf2 width\cf5 :
+\i \cf4 this
+\i0 \cf5 .\cf2 customStyles\cf5 .\cf2 stepIndicatorSize\cf5 /\cf7 2\cf5 ,\
+          \};\
+          \cf2 indicatorLabelStyle \cf5 = \{ \cf2 fontSize\cf5 : 
+\i \cf4 this
+\i0 \cf5 .\cf2 customStyles\cf5 .\cf2 stepIndicatorLabelFontSize\cf5 , \cf2 color\cf5 : 
+\i \cf4 this
+\i0 \cf5 .\cf2 customStyles\cf5 .\cf2 stepIndicatorLabelFinishedColor \cf5 \};\
+          
+\i \cf4 break
+\i0 \cf5 ;\
+        \}\
+\
+        
+\i \cf4 case 
+\i0 \cf2 STEP_STATUS\cf5 .\cf2 UNFINISHED\cf5 :\{\
+          \cf2 stepStyle \cf5 = \{\
+            \cf2 backgroundColor\cf5 : 
+\i \cf4 this
+\i0 \cf5 .\cf2 customStyles\cf5 .\cf2 stepIndicatorUnFinishedColor\cf5 ,\
+            \cf2 borderWidth\cf5 :
+\i \cf4 this
+\i0 \cf5 .\cf2 customStyles\cf5 .\cf2 stepStrokeWidth\cf5 ,\
+            \cf2 borderColor\cf5 :
+\i \cf4 this
+\i0 \cf5 .\cf2 customStyles\cf5 .\cf2 stepStrokeUnFinishedColor\cf5 ,\
+            \cf2 height\cf5 :
+\i \cf4 this
+\i0 \cf5 .\cf2 customStyles\cf5 .\cf2 stepIndicatorSize\cf5 ,\
+            \cf2 width\cf5 :
+\i \cf4 this
+\i0 \cf5 .\cf2 customStyles\cf5 .\cf2 stepIndicatorSize\cf5 /\cf7 2\cf5 ,\
+          \};\
+          \cf2 indicatorLabelStyle \cf5 = \{\cf2 overflow\cf5 : \cf6 'hidden'\cf5 , \cf2 fontSize\cf5 : 
+\i \cf4 this
+\i0 \cf5 .\cf2 customStyles\cf5 .\cf2 stepIndicatorLabelFontSize\cf5 , \cf2 color\cf5 : 
+\i \cf4 this
+\i0 \cf5 .\cf2 customStyles\cf5 .\cf2 stepIndicatorLabelUnFinishedColor \cf5 \};\
+          
+\i \cf4 break
+\i0 \cf5 ;\
+        \}\
+        
+\i \cf4 default
+\i0 \cf5 :\
+      \}\
+\
+      
+\i \cf4 return 
+\i0 \cf5 (\
+        <\cf8 Animated.View 
+\i \cf9 key
+\i0 \cf6 =\cf5 \{\cf6 'step-indicator'\cf5 \} 
+\i \cf9 removeClippedSubviews style
+\i0 \cf6 =\cf5 \{[\cf2 styles\cf5 .\cf2 step \cf5 , \cf2 stepStyle \cf5 ]\}>\
+          <\cf8 Text 
+\i \cf9 style
+\i0 \cf6 =\cf5 \{\cf2 indicatorLabelStyle\cf5 \}>\{ \cf2 position \cf5 + \cf7 1 \cf5 \}</\cf8 Text\cf5 >\
+        </\cf8 Animated.View\cf5 >\
+      );\
+    \}\
+\
+    \cf2 getStepStatus \cf5 = (\cf2 stepPosition\cf5 ) => \{\
+      
+\i \cf4 const 
+\i0 \cf5 \{ \cf2 currentPosition \cf5 \} = 
+\i \cf4 this
+\i0 \cf5 .\cf2 props\cf5 ;\
+      
+\i \cf4 if
+\i0 \cf5 (\cf2 stepPosition \cf5 === \cf2 currentPosition\cf5 ) \{\
+        
+\i \cf4 return 
+\i0 \cf2 STEP_STATUS\cf5 .\cf2 CURRENT\cf5 ;\
+      \}\
+      
+\i \cf4 else if
+\i0 \cf5 (\cf2 stepPosition \cf5 < \cf2 currentPosition\cf5 ) \{\
+        
+\i \cf4 return 
+\i0 \cf2 STEP_STATUS\cf5 .\cf2 FINISHED\cf5 ;\
+      \}\
+      
+\i \cf4 else 
+\i0 \cf5 \{\
+        
+\i \cf4 return 
+\i0 \cf2 STEP_STATUS\cf5 .\cf2 UNFINISHED\cf5 ;\
+      \}\
+    \}\
+\
+    \cf2 onCurrentPositionChanged \cf5 = (\cf2 position\cf5 ) => \{\
+      
+\i \cf4 let 
+\i0 \cf5 \{ \cf2 stepCount \cf5 \} = 
+\i \cf4 this
+\i0 \cf5 .\cf2 props\
+      
+\i \cf4 if
+\i0 \cf5 (\cf2 position \cf5 > \cf2 stepCount\cf5 -\cf7 1\cf5 ) \{\
+        \cf2 position \cf5 = \cf2 stepCount\cf5 -\cf7 1\cf5 ;\
+      \}\
+      
+\i \cf4 const 
+\i0 \cf2 animateToPosition \cf5 = (
+\i \cf4 this
+\i0 \cf5 .\cf2 state\cf5 .\cf2 progressBarSize\cf5 / (\cf2 stepCount \cf5 - \cf7 1\cf5 )) * \cf2 position\cf5 ;\
+      
+\i \cf4 this
+\i0 \cf5 .\cf2 sizeAnim\cf5 .\cf2 setValue\cf5 (
+\i \cf4 this
+\i0 \cf5 .\cf2 customStyles\cf5 .\cf2 stepIndicatorSize\cf5 );\
+      
+\i \cf4 this
+\i0 \cf5 .\cf2 borderRadiusAnim\cf5 .\cf2 setValue\cf5 (
+\i \cf4 this
+\i0 \cf5 .\cf2 customStyles\cf5 .\cf2 stepIndicatorSize\cf5 /\cf7 2\cf5 );\
+      \cf2 Animated\cf5 .\cf2 sequence\cf5 ([\
+        \cf2 Animated\cf5 .\cf2 timing\cf5 (\
+          
+\i \cf4 this
+\i0 \cf5 .\cf2 progressAnim\cf5 ,\
+          \{\cf2 toValue\cf5 : \cf2 animateToPosition\cf5 ,\cf2 duration\cf5 :\cf7 200\cf5 \}\
+        ),\
+        \cf2 Animated\cf5 .\cf2 parallel\cf5 ([\
+          \cf2 Animated\cf5 .\cf2 timing\cf5 (\
+            
+\i \cf4 this
+\i0 \cf5 .\cf2 sizeAnim\cf5 ,\
+            \{\cf2 toValue\cf5 : 
+\i \cf4 this
+\i0 \cf5 .\cf2 customStyles\cf5 .\cf2 currentStepIndicatorSize\cf5 , \cf2 duration\cf5 :\cf7 100\cf5 \}\
+          ),\
+          \cf2 Animated\cf5 .\cf2 timing\cf5 (\
+            
+\i \cf4 this
+\i0 \cf5 .\cf2 borderRadiusAnim\cf5 ,\
+            \{\cf2 toValue\cf5 : 
+\i \cf4 this
+\i0 \cf5 .\cf2 customStyles\cf5 .\cf2 currentStepIndicatorSize\cf5 /\cf7 2\cf5 , \cf2 duration\cf5 :\cf7 100\cf5 \}\
+          )\
+        ])\
+      ]).\cf2 start\cf5 ();\
+    \}\
+\
+  \}\
+\
+  
+\i \cf4 const 
+\i0 \cf2 styles \cf5 =  \cf2 StyleSheet\cf5 .\cf2 create\cf5 (\{\
+    \cf2 container\cf5 : \{\
+      \cf2 backgroundColor\cf5 :\cf6 'transparent'\
+    \cf5 \},\
+    \cf2 stepIndicatorContainer\cf5 : \{\
+      \cf2 flexDirection\cf5 :\cf6 'row'\cf5 ,\
+      \cf2 alignItems\cf5 :\cf6 'center'\cf5 ,\
+      \cf2 justifyContent\cf5 :\cf6 'space-around'\cf5 ,\
+      \cf2 backgroundColor\cf5 :\cf6 'transparent'\
+    \cf5 \},\
+    \cf2 stepLabelsContainer\cf5 : \{\
+      \cf2 alignItems\cf5 :\cf6 'center'\cf5 ,\
+      \cf2 justifyContent\cf5 :\cf6 'space-around'\
+    \cf5 \},\
+    \cf2 step\cf5 : \{\
+      \cf2 alignItems\cf5 :\cf6 'center'\cf5 ,\
+      \cf2 justifyContent\cf5 :\cf6 'center'\cf5 ,\
+      \cf2 zIndex\cf5 : \cf7 2\
+    \cf5 \},\
+    \cf2 stepContainer\cf5 : \{\
+      \cf2 flex\cf5 :\cf7 1\cf5 ,\
+      \cf2 flexDirection\cf5 :\cf6 'row'\cf5 ,\
+      \cf2 alignItems\cf5 :\cf6 'center'\cf5 ,\
+      \cf2 justifyContent\cf5 :\cf6 'center'\
+    \cf5 \},\
+    \cf2 stepLabel\cf5 : \{\
+      \cf2 fontSize\cf5 :\cf7 12\cf5 ,\
+      \cf2 textAlign\cf5 :\cf6 'center'\cf5 ,\
+      \cf2 fontWeight\cf5 :\cf6 '500'\
+    \cf5 \},\
+    \cf2 stepLabelItem\cf5 : \{\
+      \cf2 flex\cf5 :\cf7 1\cf5 ,\
+      \cf2 alignItems\cf5 :\cf6 'center'\cf5 ,\
+      \cf2 justifyContent\cf5 :\cf6 'center'\
+    \cf5 \}\
+  \});\
+\
+  \cf2 StepIndicator\cf5 .\cf2 propTypes \cf5 = \{\
+    \cf2 currentPosition\cf5 : \cf2 PropTypes\cf5 .\cf2 number\cf5 ,\
+    \cf2 stepCount\cf5 : \cf2 PropTypes\cf5 .\cf2 number\cf5 ,\
+    \cf2 customStyles\cf5 : \cf2 PropTypes\cf5 .\cf2 object\cf5 ,\
+    \cf2 direction\cf5 : \cf2 PropTypes\cf5 .\cf2 oneOf\cf5 ([\cf6 'vertical'\cf5 , \cf6 'horizontal'\cf5 ]),\
+    \cf2 labels\cf5 : \cf2 PropTypes\cf5 .\cf2 array\cf5 ,\
+    \cf2 onPress\cf5 : \cf2 PropTypes\cf5 .\cf2 func\
+  \cf5 \};\
+\
+  \cf2 StepIndicator\cf5 .\cf2 defaultProps \cf5 = \{\
+    \cf2 currentPosition\cf5 : \cf7 0\cf5 ,\
+    \cf2 stepCount\cf5 : \cf7 5\cf5 ,\
+    \cf2 customStyles\cf5 : \{\},\
+    \cf2 direction\cf5 : \cf6 'horizontal'\
+  \cf5 \};\
+\
+}
